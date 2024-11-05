@@ -62,4 +62,19 @@ public class DepartmentService {
         departmentResponse.addAll(departments);
         return departmentResponse;
     }
+
+    public DepartmentResponse getAllDepartmentByAccountId(Long accountId) {
+        if(accountId == null) {
+            logger.info("Account id is null");
+            return null;
+        }
+        List<Department> departments = departmentRepository.findByAccountId(accountId);
+        if(departments == null || departments.isEmpty()) {
+            logger.info("Department does not exist");
+            return null;
+        }
+        DepartmentResponse departmentResponse = new DepartmentResponse();
+        departmentResponse.addAll(departments);
+        return departmentResponse;
+    }
 }

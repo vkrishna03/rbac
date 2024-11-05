@@ -1,5 +1,7 @@
 package com.example.rbac.service;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,21 @@ public class FeedbackService {
         }
         FeedbackResponse feedbackResponse = new FeedbackResponse();
         feedbackResponse.add(feedback);
+        return feedbackResponse;
+    }
+
+    public FeedbackResponse getFeedbackByAccountId(Long accountId) {
+        if(accountId == null) {
+            logger.info("Account id is null");
+            return null;
+        }
+        List<Feedback> feedbacks = feedbackRepository.findByAccountId(accountId);
+        if(feedbacks == null || feedbacks.isEmpty()) {
+            logger.info("Feedback does not exist");
+            return null;
+        }
+        FeedbackResponse feedbackResponse = new FeedbackResponse();
+        feedbackResponse.addAll(feedbacks);
         return feedbackResponse;
     }
 }

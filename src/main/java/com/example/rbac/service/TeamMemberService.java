@@ -80,4 +80,39 @@ public class TeamMemberService {
         teamMemberResponse.addAll(teamMembers);
         return teamMemberResponse;
     }
+
+
+    public TeamMemberResponse getTeamMemberByAccountId(Long accountId) {
+        if(accountId == null) {
+            logger.info("Account id is null");
+            return null;
+        }
+        List<TeamMember> teamMembers = teamMemberRepository.findByAccountId(accountId);
+        if(teamMembers == null || teamMembers.isEmpty()) {
+            logger.info("Account does not have any team members");
+            return null;
+        }
+        TeamMemberResponse teamMemberResponse = TeamMemberResponse.builder().build();
+        teamMemberResponse.addAll(teamMembers);
+        return teamMemberResponse;
+    }
+
+    public TeamMemberResponse getTeamMemberByUserIdAndTeamId(long userId, long teamId) {
+        if(!userRepository.existsByUserId(userId)) {
+            logger.info("User does not exist");
+            return null;
+        }
+        if(!teamRepository.existsByTeamId(teamId)) {
+            logger.info("Team does not exist");
+            return null;
+        }
+        List<TeamMember> teamMembers = teamMemberRepository.findByUserIdAndTeamId(userId, teamId);
+        if(teamMembers == null || teamMembers.isEmpty()) {
+            logger.info("User does not have any team members");
+            return null;
+        }
+        TeamMemberResponse teamMemberResponse = TeamMemberResponse.builder().build();
+        teamMemberResponse.addAll(teamMembers);
+        return teamMemberResponse;
+    }
 }
