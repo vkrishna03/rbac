@@ -8,4 +8,6 @@ import com.example.rbac.db.entity.Feedback;
 @Repository
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
+    Feedback findByFeedbackId(Long feedbackId);
+
 }

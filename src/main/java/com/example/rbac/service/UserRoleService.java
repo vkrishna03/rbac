@@ -1,6 +1,8 @@
 package com.example.rbac.service;
 
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import com.example.rbac.db.repository.RoleRepository;
 import com.example.rbac.db.repository.UserRepository;
 import com.example.rbac.db.repository.UserRoleRepository;
 import com.example.rbac.web.request.UserRoleRequest;
+import com.example.rbac.web.response.UserRoleResponse;
 
 @Service
 public class UserRoleService {
@@ -47,5 +50,42 @@ public class UserRoleService {
     }
 
 
-    
+    public UserRoleResponse getUserRoleByUserId(Long userId) {
+        if(userId == null) {
+            logger.info("User id is null");
+            return null;
+        }
+        if(!userRepository.existsByUserId(userId)) {
+            logger.info("User does not exist");
+            return null;
+        }
+        List<UserRole> userRoles = userRoleRepository.findByUserId(userId);
+        if(userRoles == null || userRoles.isEmpty()) {
+            logger.info("User does not have any roles");
+            return null;
+        }
+        UserRoleResponse userRoleResponse = new UserRoleResponse();
+        userRoleResponse.addAll(userRoles);
+        return userRoleResponse;
+    }
+
+
+    public UserRoleResponse getUserRoleByRoleId(Long roleId) {
+        if(roleId == null) {
+            logger.info("Role id is null");
+            return null;
+        }
+        if(!roleRepository.existsByRoleId(roleId)) {
+            logger.info("Role does not exist");
+            return null;
+        }
+        List<UserRole> userRoles = userRoleRepository.findByRoleId(roleId);
+        if(userRoles == null || userRoles.isEmpty()) {
+            logger.info("Role does not have any users");
+            return null;
+        }
+        UserRoleResponse userRoleResponse = new UserRoleResponse();
+        userRoleResponse.addAll(userRoles);
+        return userRoleResponse;
+    }
 }

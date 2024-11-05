@@ -8,4 +8,6 @@ import com.example.rbac.db.entity.Organization;
 @Repository
 public interface OrganizationRepository extends JpaRepository<Organization, Long> {
 
+    Organization findByOrganizationId(Long organizationId);
+
 }
