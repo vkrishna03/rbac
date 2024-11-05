@@ -16,6 +16,6 @@ public class DataInit {
 	
 	@PostConstruct
 	public void init() {
-		
+	}
 	
 }
