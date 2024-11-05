@@ -15,20 +15,21 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Privilege {
+public class Team {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private long id;
 	
-	@Column(nullable=false, unique=true)
-	private long priviledgeId;
+	@Column(nullable = false)
+	private long teamId;
 	
-	@Column(nullable=false)
-	private String action;	// CREATE, READ, UPDATE, DELETE
+	@Column(nullable = false)
+	private String teamName;
 	
-	@Column(nullable=false)
-	private String resource;
+	@Column(nullable = false)
+	private long parentTeamID;
 	
-	@Column
-	private long contextId;
+	@Column()
+	private long accountId;
 }

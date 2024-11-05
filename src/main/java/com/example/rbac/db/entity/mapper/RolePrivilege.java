@@ -1,4 +1,4 @@
-package com.example.rbac.db.entity;
+package com.example.rbac.db.entity.mapper;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,20 +15,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Privilege {
+public class RolePrivilege {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private long id;
 	
-	@Column(nullable=false, unique=true)
-	private long priviledgeId;
+	@Column(nullable= false)
+	private long roleId;
 	
-	@Column(nullable=false)
-	private String action;	// CREATE, READ, UPDATE, DELETE
-	
-	@Column(nullable=false)
-	private String resource;
-	
-	@Column
-	private long contextId;
+	@Column(nullable= false)
+	private long privilegeId;
 }
