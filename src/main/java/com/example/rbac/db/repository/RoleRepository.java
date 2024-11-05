@@ -8,4 +8,8 @@ import com.example.rbac.db.entity.Role;
 
 public interface RoleRepository extends JpaRepository<Role, Long>{
 	Optional<Role> findByRoleName(String name);
+
+	boolean existsByRoleId(Long roleId);
+
+    Optional<Role> findByRoleId(long roleId);
 }

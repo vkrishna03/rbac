@@ -9,4 +9,6 @@ import com.example.rbac.db.entity.Department;
 @Repository
 public interface TeamRepository extends JpaRepository<Department, Long> {
 
+    boolean existsByTeamId(Long teamId);
+
 }
