@@ -21,7 +21,7 @@ public class Privilege {
 	private long id;
 	
 	@Column(nullable=false, unique=true)
-	private long priviledgeId;
+	private long privilegeId;
 	
 	@Column(nullable=false)
 	private String action;	// CREATE, READ, UPDATE, DELETE
@@ -31,4 +31,7 @@ public class Privilege {
 	
 	@Column
 	private long contextId;
+	
+	@Column
+	private long accocuntId;	// NULL for common standard system roles like SuperAdmin, Admin and Agent. 
 }

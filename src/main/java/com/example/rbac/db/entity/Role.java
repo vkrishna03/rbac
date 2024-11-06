@@ -24,10 +24,13 @@ public class Role {
 	@Column(nullable=false, unique=true)
 	private long roleId;
 	
-	@Column(nullable=false, unique=true)
+	@Column(nullable=false)
 	private String roleName;
 	
 	@Column(nullable=false)
 	private String roleType;
+	
+	@Column
+	private long accocuntId;	// NULL for common standard system roles like SuperAdmin, Admin and Agent. 
 
 }

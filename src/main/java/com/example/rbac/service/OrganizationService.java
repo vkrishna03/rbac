@@ -30,7 +30,7 @@ public class OrganizationService {
             logger.info("Organization id is null");
             return null;
         }
-        Organization organization = organizationRepository.findByOrganizationId(organizationId);
+        Organization organization = organizationRepository.findByAccountId(organizationId);
         if(organization == null) {
             logger.info("Organization does not exist");
             return null;

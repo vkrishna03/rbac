@@ -1,7 +1,9 @@
 package com.example.rbac.service;
 
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,7 @@ import com.example.rbac.web.request.RoleRequest;
 
 import jakarta.annotation.PostConstruct;
 
+
 @Service
 public class RoleService {
 
@@ -27,13 +30,21 @@ public class RoleService {
 	private RoleRepository roleRepository;
 	
 	@PostConstruct
-	public void init() {
-		createInitialRoles();
-	}
-	
-	
 	public void createInitialRoles() {
-		// TODO: Implement logic
+		
+		List<String> initRoles = List.of("Super_Admin", "Admin", "Agent");
+		
+		for(String roleName: initRoles) {
+			roleRepository.findByRoleName(roleName).ifPresentOrElse(existingRoles -> {},() -> {
+				Role role = Role.builder()
+						.roleId(UUID.randomUUID().getMostSignificantBits())
+						.roleName(roleName)
+						.roleType("SYSTEM")
+						.build();
+				
+				roleRepository.save(role);
+			});
+		}
 	}
 
 	public Role create(RoleRequest roleRequest) {
