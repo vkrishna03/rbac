@@ -1,11 +1,10 @@
 package com.example.rbac.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
-import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,14 +13,17 @@ import com.example.rbac.db.entity.Privilege;
 import com.example.rbac.db.repository.PrivilegeRepository;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.Entity;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.metamodel.EntityType;
 
 @Service
 public class PrivilegeService {
 	
 	@Autowired
 	private PrivilegeRepository privilegeRepository;
+
+	@Autowired
+	private EntityManagerFactory entityManagerFactory;
 	
 	@Autowired
 	private ListableBeanFactory beanFactory;
@@ -53,13 +55,21 @@ public class PrivilegeService {
     }
     
     public void createInitPrivilege() {
-    	// Retrieve beans annotated with @Entity
-        Map<String, Object> entities = beanFactory.getBeansWithAnnotation(Entity.class);
+    	try {
+        // Get all managed entity types from JPA
+        Set<EntityType<?>> entities = entityManagerFactory.getMetamodel().getEntities();
+        System.out.println("Found entities: " + entities.size());
         
-        entities.values().parallelStream().forEach(entity -> {
-        	String resourceName = entity.getClass().getSimpleName();
-        	String status = createPrivileges(actions,resourceName);
+        entities.forEach(entityType -> {
+            Class<?> entityClass = entityType.getJavaType();
+            String resourceName = entityClass.getSimpleName();
+            System.out.println("Processing entity: " + resourceName);
+            String status = createPrivileges(actions, resourceName);
         });
+    } catch (Exception e) {
+        System.err.println("Error creating privileges: " + e.getMessage());
+        e.printStackTrace();
+    }
         
     }
     
