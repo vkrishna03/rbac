@@ -12,14 +12,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Organization {
+public class Account {
 	
 	@Id
 	private long id;
 	
 	private long accountId;
 	
-	private String orgName;
+	private String accountName;
 	
 	private long userId;
 }

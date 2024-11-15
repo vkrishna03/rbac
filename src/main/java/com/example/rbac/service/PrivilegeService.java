@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
-import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +25,11 @@ public class PrivilegeService {
 	@Autowired
 	private EntityManagerFactory entityManagerFactory;
 	
-	@Autowired
-	private ListableBeanFactory beanFactory;
+	@PostConstruct
+    public void init() {
+    	createInitPrivilege();
+    }
+	
 	
 	public static final List<String> actions = List.of("READ", "WRITE", "UPDATE", "DELETE");
 	
@@ -34,9 +37,9 @@ public class PrivilegeService {
 		
 		for(String actionName: action) {
 			privilegeRepository.findByActionAndResource(actionName, resourceName).ifPresentOrElse(entities -> {},() -> {
-                
+				
 				Privilege privilege = Privilege.builder()
-						.privilegeId(UUID.randomUUID().getMostSignificantBits())
+						.privilegeId(ThreadLocalRandom.current().nextLong(1000000000L, 9999999999L))
 						.action(actionName).resource(resourceName).build();
 				
                 privilegeRepository.save(privilege);
@@ -66,17 +69,11 @@ public class PrivilegeService {
             System.out.println("Processing entity: " + resourceName);
             String status = createPrivileges(actions, resourceName);
         });
-    } catch (Exception e) {
-        System.err.println("Error creating privileges: " + e.getMessage());
-        e.printStackTrace();
-    }
+    	} catch (Exception e) {
+    		System.err.println("Error creating privileges: " + e.getMessage());
+    		e.printStackTrace();
+    	}
         
     }
-    
-    @PostConstruct
-    public void init() {
-    	createInitPrivilege();
-    }
-    
     
 }

@@ -13,4 +13,6 @@ public interface RolePrivilegeRepository extends JpaRepository<RolePrivilege, Lo
     List<RolePrivilege> findByRoleId(Long roleId);
 
     List<RolePrivilege> findByPrivilegeId(Long privilegeId);
+    
+    boolean existsByRoleIdAndPrivilegeId(long roleId, long privilegeId);
 }

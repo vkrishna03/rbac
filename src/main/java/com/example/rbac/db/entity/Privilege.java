@@ -33,5 +33,5 @@ public class Privilege {
 	private long contextId;
 	
 	@Column
-	private long accocuntId;	// NULL for common standard system roles like SuperAdmin, Admin and Agent. 
+	private long accountId;	// NULL for common standard system roles like SuperAdmin, Admin and Agent. 
 }

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.rbac.db.entity.Organization;
+import com.example.rbac.db.entity.Account;
 import com.example.rbac.db.repository.OrganizationRepository;
 import com.example.rbac.web.response.OrganizationResponse;
 
@@ -17,7 +17,7 @@ public class OrganizationService {
     @Autowired
     private OrganizationRepository organizationRepository;
 
-    public Organization create(Organization organization) {
+    public Account create(Account organization) {
         if(organization == null) {
             logger.info("Organization is null");
             return null;
@@ -30,7 +30,7 @@ public class OrganizationService {
             logger.info("Organization id is null");
             return null;
         }
-        Organization organization = organizationRepository.findByAccountId(organizationId);
+        Account organization = organizationRepository.findByAccountId(organizationId);
         if(organization == null) {
             logger.info("Organization does not exist");
             return null;

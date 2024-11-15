@@ -10,8 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.rbac.db.entity.Privilege;
 import com.example.rbac.db.entity.Role;
+import com.example.rbac.db.entity.mapper.RolePrivilege;
 import com.example.rbac.db.repository.PrivilegeRepository;
+import com.example.rbac.db.repository.RolePrivilegeRepository;
 import com.example.rbac.db.repository.RoleRepository;
 import com.example.rbac.web.request.RoleRequest;
 
@@ -29,22 +32,15 @@ public class RoleService {
 	@Autowired
 	private RoleRepository roleRepository;
 	
+	@Autowired
+	private RolePrivilegeRepository rolePrivilegeRepository;
+	
 	@PostConstruct
-	public void createInitialRoles() {
+	public void init() {
+		//TODO: Make sure mapInitialPrivileges runs only after roles are created.
+		createInitialRoles();
+		mapInitialPrivileges();
 		
-		List<String> initRoles = List.of("Super_Admin", "Admin", "Agent");
-		
-		for(String roleName: initRoles) {
-			roleRepository.findByRoleName(roleName).ifPresentOrElse(existingRoles -> {},() -> {
-				Role role = Role.builder()
-						.roleId(UUID.randomUUID().getMostSignificantBits())
-						.roleName(roleName)
-						.roleType("SYSTEM")
-						.build();
-				
-				roleRepository.save(role);
-			});
-		}
 	}
 
 	public Role create(RoleRequest roleRequest) {
@@ -78,4 +74,90 @@ public class RoleService {
         }
         return role.get();
     }
+	
+	public Role getRoleByRoleNameAndRoleType(String roleName, String roleType) {
+        Optional<Role> role = roleRepository.findByRoleNameAndRoleType(roleName, roleType);
+        if (role== null || role.isEmpty()) {
+            logger.info("Role with name {} does not exist", roleName);
+            return null;
+        }
+        return role.get();
+    }
+	
+	public String mapRolePrivileges(long roleId, long privilegeId) {
+		
+		if(rolePrivilegeRepository.existsByRoleIdAndPrivilegeId(roleId, privilegeId)) {
+			return "Already Exists";
+		}
+		
+		RolePrivilege rolePrivilege = RolePrivilege.builder()
+				.roleId(roleId)
+				.privilegeId(privilegeId)
+				.build();
+		
+		rolePrivilegeRepository.save(rolePrivilege);
+		
+		return "Okay";
+	}
+	
+	
+	public void createInitialRoles() {
+		
+		List<String> initRoles = List.of("SUPER_ADMIN", "ADMIN", "AGENT");
+		
+		for(String roleName: initRoles) {
+			roleRepository.findByRoleName(roleName).ifPresentOrElse(existingRoles -> {},() -> {
+				Role role = Role.builder()
+						.roleId(UUID.randomUUID().getMostSignificantBits())
+						.roleName(roleName)
+						.roleType("SYSTEM")
+						.build();
+				
+				roleRepository.save(role);
+			});
+		}
+	}
+	
+	
+	public void mapInitialPrivileges() {
+		logger.info("mapping privileges");
+		List<String> actionNames = List.of("READ", "WRITE", "UPDATE", "DELETE");
+		List<Role> systemRoles = roleRepository.findByRoleType("SYSTEM");
+		
+		for(String action: actionNames) {
+			List<Privilege> privileges = privilegeRepository.findByAction(action);
+			
+			// Read privileges for every system role - SuperAdmin, Admin, Agent
+			if(action == "READ") {
+				for(Role role: systemRoles) {
+					for(Privilege priv: privileges) {
+						mapRolePrivileges(role.getRoleId(), priv.getPrivilegeId());
+					}
+				}
+			}
+			
+			// Write and Update privileges for - Admin
+			if(action == "WRITE" || action == "UPDATE") {
+				for(Role role: systemRoles) {
+					if(role.getRoleName() != "AGENT") {
+						for(Privilege priv: privileges) {
+							mapRolePrivileges(role.getRoleId(), priv.getPrivilegeId());
+						}
+					}
+				}
+			}
+			
+			// Delete Privileges for - SuperAdmin
+			if(action == "DELETE") {
+				roleRepository.findByRoleNameAndRoleType("SUPER_ADMIN", "SYSTEM")
+						.ifPresentOrElse(existingRole -> {
+							for(Privilege priv: privileges) {
+								mapRolePrivileges(existingRole.getRoleId(), priv.getPrivilegeId());
+							}
+						}, () -> {});
+			
+			}
+			
+		}
+	}
 }

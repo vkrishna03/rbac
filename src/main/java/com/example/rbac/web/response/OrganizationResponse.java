@@ -3,7 +3,7 @@ package com.example.rbac.web.response;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.rbac.db.entity.Organization;
+import com.example.rbac.db.entity.Account;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,18 +16,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrganizationResponse {
     
-    private List<Organization> organizations;
+    private List<Account> organizations;
 
-    public void add(Organization organization) {
+    public void add(Account organization) {
         if(organizations == null) {
             organizations = new ArrayList<>();
         }
         organizations.add(organization);
     }
 
-    public void addAll(List<Organization> organizations2) {
+    public void addAll(List<Account> organizations2) {
         if(this.organizations == null) {
-            this.organizations = new ArrayList<Organization>();
+            this.organizations = new ArrayList<Account>();
         }
         this.organizations.addAll(organizations2);
     }
