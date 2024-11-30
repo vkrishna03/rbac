@@ -13,7 +13,7 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 	
-	private final SecretKey key = Keys.hmacShaKeyFor(keyGenerator());	// secret key
+	private final SecretKey key = Keys.hmacShaKeyFor("WU2v8hmzr3lNPTD0ZM2BUh6lT1S8iJBK".getBytes());	// secret key
 	private final long jwtExpirationMs = 24 * 60 * 60 * 100;	// expiry time
 	
 	public String generateToken(String username) {

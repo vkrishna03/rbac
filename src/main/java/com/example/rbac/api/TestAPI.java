@@ -54,14 +54,14 @@ public class TestAPI {
 				i++;
 			}
 			
-			String jwt = userService.mapRole("dev@mail.in", "AGENT", "SYSTEM");
+			String jwt = userService.mapRole("dev@mail.in", "EMPLOYEE");
 			map.put("dev@mail.in", jwt);
 			
-			jwt = userService.mapRole("admin@mail.in", "ADMIN", "SYSTEM");
+			jwt = userService.mapRole("admin@mail.in", "MANAGER");
 			map.put("admin@mail.in", jwt);
 			
 			
-			jwt = userService.mapRole("super@mail.in", "SUPER_ADMIN", "SYSTEM");
+			jwt = userService.mapRole("super@mail.in", "OWNER");
 			map.put("super@mail.in", jwt);
 			
 			return ResponseEntity.ok(map);

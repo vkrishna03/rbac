@@ -16,6 +16,7 @@ import com.example.rbac.db.entity.mapper.RolePrivilege;
 import com.example.rbac.db.repository.PrivilegeRepository;
 import com.example.rbac.db.repository.RolePrivilegeRepository;
 import com.example.rbac.db.repository.RoleRepository;
+import com.example.rbac.enums.RoleType;
 import com.example.rbac.web.request.RoleRequest;
 
 import jakarta.annotation.PostConstruct;
@@ -103,14 +104,29 @@ public class RoleService {
 	
 	public void createInitialRoles() {
 		
-		List<String> initRoles = List.of("SUPER_ADMIN", "ADMIN", "AGENT");
+		List<String> initAdminRoles = List.of("OWNER", "MANAGER");
+		List<String> initAgentRoles = List.of("EMPLOYEE");
 		
-		for(String roleName: initRoles) {
+		for(String roleName: initAdminRoles) {
 			roleRepository.findByRoleName(roleName).ifPresentOrElse(existingRoles -> {},() -> {
 				Role role = Role.builder()
 						.roleId(UUID.randomUUID().getMostSignificantBits())
 						.roleName(roleName)
-						.roleType("SYSTEM")
+						.roleType(RoleType.ADMIN)
+						.isCustomRole(false)
+						.build();
+				
+				roleRepository.save(role);
+			});
+		}
+		
+		for(String roleName: initAgentRoles) {
+			roleRepository.findByRoleName(roleName).ifPresentOrElse(existingRoles -> {},() -> {
+				Role role = Role.builder()
+						.roleId(UUID.randomUUID().getMostSignificantBits())
+						.roleName(roleName)
+						.roleType(RoleType.AGENT)
+						.isCustomRole(false)
 						.build();
 				
 				roleRepository.save(role);
@@ -122,7 +138,7 @@ public class RoleService {
 	public void mapInitialPrivileges() {
 		logger.info("mapping privileges");
 		List<String> actionNames = List.of("READ", "WRITE", "UPDATE", "DELETE");
-		List<Role> systemRoles = roleRepository.findByRoleType("SYSTEM");
+		List<Role> systemRoles = roleRepository.findByIsCustomRole(false);
 		
 		for(String action: actionNames) {
 			List<Privilege> privileges = privilegeRepository.findByAction(action);
@@ -139,7 +155,7 @@ public class RoleService {
 			// Write and Update privileges for - Admin
 			if(action == "WRITE" || action == "UPDATE") {
 				for(Role role: systemRoles) {
-					if(role.getRoleName() != "AGENT") {
+					if(role.getRoleType() != RoleType.AGENT) {
 						for(Privilege priv: privileges) {
 							mapRolePrivileges(role.getRoleId(), priv.getPrivilegeId());
 						}
@@ -148,15 +164,15 @@ public class RoleService {
 			}
 			
 			// Delete Privileges for - SuperAdmin
-			if(action == "DELETE") {
-				roleRepository.findByRoleNameAndRoleType("SUPER_ADMIN", "SYSTEM")
-						.ifPresentOrElse(existingRole -> {
-							for(Privilege priv: privileges) {
-								mapRolePrivileges(existingRole.getRoleId(), priv.getPrivilegeId());
-							}
-						}, () -> {});
-			
-			}
+//			if(action == "DELETE") {
+//				roleRepository.findByRoleNameAndRoleType("SUPER_ADMIN", "SYSTEM")
+//						.ifPresentOrElse(existingRole -> {
+//							for(Privilege priv: privileges) {
+//								mapRolePrivileges(existingRole.getRoleId(), priv.getPrivilegeId());
+//							}
+//						}, () -> {});
+//			
+//			}
 			
 		}
 	}

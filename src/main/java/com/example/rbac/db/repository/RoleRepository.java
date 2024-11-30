@@ -17,4 +17,7 @@ public interface RoleRepository extends JpaRepository<Role, Long>{
     List<Role> findByRoleType(String roleType);
     
     Optional<Role> findByRoleNameAndRoleType(String roleName, String roleType);
+    
+    
+    List<Role> findByIsCustomRole(boolean condition);
 }

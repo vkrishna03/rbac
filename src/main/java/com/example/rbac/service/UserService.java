@@ -51,9 +51,9 @@ public class UserService {
 		return null;
 	}
 	
-	public String mapRole(String username, String roleName, String roleType) {
+	public String mapRole(String username, String roleName) {
 		
-		Role role = roleService.getRoleByRoleNameAndRoleType(roleName, roleType);
+		Role role = roleService.getRoleByRoleName(roleName);
 		User user = userRepository.findByUsername(username).get();
 		
 		if(!userRoleRepository.existsByUserIdAndRoleId(user.getUserId(), role.getRoleId())) {

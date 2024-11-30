@@ -1,7 +1,11 @@
 package com.example.rbac.db.entity;
 
+import com.example.rbac.enums.RoleType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,10 +29,14 @@ public class Role {
 	private long roleId;
 	
 	@Column(nullable=false)
-	private String roleName;
+	private String roleName;		// Manager, Employee, Team Lead
+	
+	@Enumerated(EnumType.STRING)
+	@Column(nullable=false)
+	private RoleType roleType;		// Admin, Agent, SuperAdmin 
 	
 	@Column(nullable=false)
-	private String roleType;
+	private boolean isCustomRole;	// System or Custom
 	
 	@Column
 	private long accocuntId;	// NULL for common standard system roles like SuperAdmin, Admin and Agent. 

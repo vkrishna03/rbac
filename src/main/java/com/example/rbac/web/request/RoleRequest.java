@@ -1,5 +1,7 @@
 package com.example.rbac.web.request;
 
+import com.example.rbac.enums.RoleType;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +17,6 @@ public class RoleRequest {
     
     private String roleName;
 
-    private String roleType;
+    private RoleType roleType;
 
 }

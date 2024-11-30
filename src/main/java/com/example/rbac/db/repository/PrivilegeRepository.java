@@ -11,6 +11,8 @@ import com.example.rbac.db.entity.Privilege;
 @Repository
 public interface PrivilegeRepository extends JpaRepository<Privilege, Long>{
 	Optional<Privilege> findByActionAndResource(String action, String resource);
+	
+	List<Privilege> findByResource(String resource);
 
     boolean existsByPrivilegeId(Long privilegeId);
     
