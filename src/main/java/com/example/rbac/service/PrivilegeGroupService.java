@@ -17,26 +17,37 @@ import com.example.rbac.enums.PrivilegeGroupType;
 public class PrivilegeGroupService {
 
 	@Autowired
-	private PrivilegeGroupRepository privilegeGroupRepositoy;
+	private PrivilegeGroupRepository privilegeGroupRepository;
 	
 	@Autowired
 	private PrivilegeRepository privilegeRepository;
 	
-	public String createPrivilegeGroupForModule(String moduleName,long groupId, String resourceName) {
+	public String createModule(String moduleName, List<String> groupNames) {
 		
-		List<Privilege> privileges = privilegeRepository.findByResource(resourceName);
+		long parentGroupId = ThreadLocalRandom.current().nextLong(1000000000L, 9999999999L);
 		
-		PrivilegeGroup privilegeGroup = PrivilegeGroup.builder()
-				.privilegeGroupId(ThreadLocalRandom.current().nextLong(1000000000L, 9999999999L))
+		PrivilegeGroup modulePrivilegeGroup = PrivilegeGroup.builder()
+				.privilegeGroupId(parentGroupId)
 				.groupName(moduleName)
 				.groupType(PrivilegeGroupType.MODULE)
-				.parentGroupId(groupId)
+				.parentGroupId(parentGroupId)
 				.build();
 		
+		privilegeGroupRepository.save(modulePrivilegeGroup);
 		
-		privileges.forEach(privilege -> {
-			privilege.setPrivilegeGroupId(privilegeGroup.getPrivilegeGroupId());
-		});
+		for(String group: groupNames) {
+			
+			List<PrivilegeGroup> groups = privilegeGroupRepository.findBygroupName(group);
+			
+			groups.forEach(privilegeGroup -> {
+				privilegeGroup.setParentGroupId(parentGroupId);
+				privilegeGroupRepository.save(privilegeGroup);
+			});
+		}
+		
+		
+		
+		
 		
 		return "";
 	}
@@ -45,7 +56,6 @@ public String createPrivilegeGroup(List<String> resources) {
 		
 		for(String resourceName: resources) {
 		List<Privilege> privileges = privilegeRepository.findByResource(resourceName);
-		System.out.println(privileges);
 		
 		long groupId = ThreadLocalRandom.current().nextLong(1000000000L, 9999999999L);
 		
@@ -56,7 +66,7 @@ public String createPrivilegeGroup(List<String> resources) {
 				.parentGroupId(groupId)
 				.build();
 		
-		privilegeGroupRepositoy.save(privilegeGroup);
+		privilegeGroupRepository.save(privilegeGroup);
 		
 		
 		privileges.forEach(privilege -> {

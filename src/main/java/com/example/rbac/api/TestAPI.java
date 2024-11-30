@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.rbac.db.entity.User;
+import com.example.rbac.service.PrivilegeGroupService;
 import com.example.rbac.service.UserService;
+import com.example.rbac.web.request.CreateModuleRequest;
 
 @RestController
 @RequestMapping("/test")
@@ -22,13 +25,29 @@ public class TestAPI {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private PrivilegeGroupService privilegeGroupService;
 
 	// anyone
-	@GetMapping("/{id}")
+	@GetMapping("test/{id}")
 	public ResponseEntity<String> test(@PathVariable String id){
 		if(id != null) {
 			return ResponseEntity.ok("Test Successful: " + id);
 		}
+		return ResponseEntity.badRequest().build();
+	}
+	
+	@PostMapping("/create-module")
+	public ResponseEntity<String> createModule(@RequestBody CreateModuleRequest request){
+		
+		
+		if(request != null) {
+			privilegeGroupService.createModule(request.getModuleName(), request.getResources());
+			
+			return ResponseEntity.ok("Okayyyy");
+		}
+		
 		return ResponseEntity.badRequest().build();
 	}
 	
